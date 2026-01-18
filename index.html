@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mini LeetCode</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 40px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background: #0a66ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004fd8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+    .easy { color: green; }
+    .accepted { color: green; }
+    .wrong { color: red; }
+    textarea {
+      font-family: monospace;
+      height: 200px;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="card">
+    <h2>Login</h2>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- PROBLEM LIST PAGE -->
+  <div id="problemListPage" class="card hidden">
+    <h2>Problems</h2>
+    <table id="problemTable"></table>
+  </div>
+
+  <!-- PROBLEM STATEMENT PAGE -->
+  <div id="statementPage" class="card hidden">
+    <h2 id="problemTitle"></h2>
+    <p id="problemDesc"></p>
+    <button onclick="goToSolve()">Solve</button>
+  </div>
+
+  <!-- SOLVE PAGE -->
+  <div id="solvePage" class="card hidden">
+    <h2>Code Editor</h2>
+    <textarea id="codeEditor">// return a + b;</textarea>
+    <button onclick="submitCode()">Submit</button>
+  </div>
+
+  <!-- SUBMISSION PAGE -->
+  <div id="submissionPage" class="card hidden">
+    <h2>Submission Result</h2>
+    <h3 id="result"></h3>
+    <pre id="submittedCode"></pre>
+    <button onclick="backToProblems()">Back to Problems</button>
+  </div>
+
+</div>
+
+<script>
+  /* ---------------- DATA ---------------- */
+  const problems = [
+    {
+      id: 1,
+      title: "Add Two Numbers",
+      description: "Return the sum of two integers a and b.",
+      expected: "a + b"
+    }
+  ];
+
+  let currentProblem = null;
+
+  /* ---------------- UTIL ---------------- */
+  function show(pageId) {
+    document.querySelectorAll(".card").forEach(p => p.classList.add("hidden"));
+    document.getElementById(pageId).classList.remove("hidden");
+  }
+
+  /* ---------------- LOGIN ---------------- */
+  function login() {
+    const user = username.value;
+    const pass = password.value;
+    if (!user || !pass) {
+      alert("Enter credentials");
+      return;
+    }
+    show("problemListPage");
+    loadProblems();
+  }
+
+  /* ---------------- PROBLEMS ---------------- */
+  function loadProblems() {
+    const table = document.getElementById("problemTable");
+    table.innerHTML = "";
+    problems.forEach(p => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${p.id}</td>
+        <td>${p.title}</td>
+        <td class="easy">Easy</td>
+      `;
+      row.onclick = () => openStatement(p.id);
+      table.appendChild(row);
+    });
+  }
+
+  function openStatement(id) {
+    currentProblem = problems.find(p => p.id === id);
+    problemTitle.innerText = currentProblem.title;
+    problemDesc.innerText = currentProblem.description;
+    show("statementPage");
+  }
+
+  /* ---------------- SOLVE ---------------- */
+  function goToSolve() {
+    show("solvePage");
+  }
+
+  function submitCode() {
+    const code = codeEditor.value;
+    const status = code.includes(currentProblem.expected)
+      ? "Accepted"
+      : "Wrong Answer";
+
+    result.innerText = status;
+    result.className = status === "Accepted" ? "accepted" : "wrong";
+    submittedCode.innerText = code;
+
+    show("submissionPage");
+  }
+
+  function backToProblems() {
+    show("problemListPage");
+  }
+</script>
+
+</body>
+</html>
